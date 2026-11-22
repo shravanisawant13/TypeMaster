@@ -1,0 +1,876 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeMaster Academy</title>
+<style>
+:root {
+  --bg:#f7f3f4;
+  --surface:#fff;
+  --surface2:#f2e9ec;
+  --text:#29151d;
+  --muted:#806d74;
+  --primary:#801f3b;
+  --primary2:#a93656;
+  --border:#eadce1;
+  --good:#16865b;
+  --bad:#d34455;
+  --shadow:0 8px 28px rgba(74,20,40,.08);
+}
+body.dark {
+  --bg:#171116;
+  --surface:#251b22;
+  --surface2:#34242e;
+  --text:#f8edf1;
+  --muted:#bdaab2;
+  --primary:#d35a7b;
+  --primary2:#ed7897;
+  --border:#493541;
+  --good:#48c995;
+  --bad:#ff7181;
+  --shadow:0 8px 28px rgba(0,0,0,.2);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  transition:.2s;min-height:100vh;
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:245px;background:var(--surface);border-right:1px solid var(--border);
+  padding:24px 16px;position:fixed;inset:0 auto 0 0;z-index:5;
+  display:flex;flex-direction:column;gap:22px;overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 8px}
+.logo{
+  width:43px;height:43px;border-radius:13px;background:var(--primary);
+  color:white;display:grid;place-items:center;font-size:22px;font-weight:800;
+}
+.brand h2{font-size:18px;margin:0}
+.brand small{color:var(--muted)}
+.nav-label{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:1.5px;padding:0 10px}
+nav{display:grid;gap:7px}
+.nav-btn{
+  border:0;background:transparent;color:var(--muted);padding:12px;
+  border-radius:10px;text-align:left;display:flex;align-items:center;gap:12px;
+  font-weight:650;width:100%;
+}
+.nav-btn:hover,.nav-btn.active{background:var(--surface2);color:var(--primary)}
+.nav-btn span{font-size:18px;width:23px;text-align:center}
+.sidebar-bottom{margin-top:auto}
+.profile{
+  padding:14px;background:var(--surface2);border-radius:13px;
+  display:flex;align-items:center;gap:10px;
+}
+.avatar{
+  width:38px;height:38px;background:var(--primary);color:white;
+  border-radius:50%;display:grid;place-items:center;font-weight:800;
+}
+.profile small{color:var(--muted)}
+.main{margin-left:245px;width:calc(100% - 245px);min-width:0}
+.topbar{
+  height:72px;padding:0 30px;background:var(--surface);
+  border-bottom:1px solid var(--border);display:flex;
+  align-items:center;justify-content:space-between;gap:12px;
+  position:sticky;top:0;z-index:4;
+}
+.topbar h2{font-size:18px;margin:0}
+.top-actions{display:flex;align-items:center;gap:10px}
+.icon-btn{
+  border:1px solid var(--border);background:var(--surface);
+  color:var(--text);border-radius:10px;padding:9px 12px;
+}
+.menu-btn{display:none}
+.content{max-width:1400px;margin:auto;padding:28px}
+.page{display:none}
+.page.active{display:block}
+.heading{margin-bottom:22px}
+.heading h1{font-size:clamp(24px,3vw,32px);margin:0 0 7px}
+.heading p{color:var(--muted);margin:0;line-height:1.6}
+.grid{display:grid;gap:17px}
+.stats-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:20px;box-shadow:var(--shadow);min-width:0;
+}
+.stat{display:flex;align-items:center;gap:13px}
+.stat-icon{
+  width:45px;height:45px;border-radius:13px;background:var(--surface2);
+  display:grid;place-items:center;font-size:21px;
+}
+.stat small{color:var(--muted);display:block;margin-bottom:5px}
+.stat strong{font-size:25px}
+.section-title{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin:28px 0 15px;flex-wrap:wrap;
+}
+.section-title h2{font-size:19px;margin:0}
+.btn{
+  border:0;background:var(--primary);color:white;padding:11px 17px;
+  border-radius:10px;font-weight:700;transition:.2s;
+}
+.btn:hover{background:var(--primary2);transform:translateY(-1px)}
+.btn.secondary{background:var(--surface2);color:var(--text)}
+.btn.outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn.danger{background:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.progress{
+  height:9px;background:var(--surface2);border-radius:20px;overflow:hidden;
+}
+.progress-fill{height:100%;background:var(--primary);width:0%;transition:.25s}
+.lesson-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.lesson-card{display:flex;flex-direction:column;gap:12px}
+.lesson-top{display:flex;justify-content:space-between;gap:10px}
+.lesson-number{
+  width:37px;height:37px;border-radius:11px;background:var(--surface2);
+  color:var(--primary);display:grid;place-items:center;font-weight:800;
+}
+.tag{
+  font-size:11px;font-weight:800;padding:6px 9px;border-radius:20px;
+  background:var(--surface2);color:var(--primary);height:max-content;
+}
+.lesson-card h3{font-size:16px;margin:0}
+.lesson-card p{font-size:13px;color:var(--muted);margin:0;line-height:1.5}
+.lesson-card .btn{margin-top:auto}
+.practice-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px}
+.practice-main{min-width:0}
+.practice-stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:17px}
+.practice-stat{text-align:center;padding:15px 8px}
+.practice-stat small{color:var(--muted);display:block;margin-bottom:7px}
+.practice-stat strong{font-size:25px}
+.typing-card{padding:22px}
+.typing-top{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;margin-bottom:18px;
+}
+.typing-top h2{font-size:18px;margin:0}
+.typing-text{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:13px;padding:22px;min-height:145px;
+  font-size:clamp(17px,2vw,21px);line-height:2;
+  letter-spacing:.3px;overflow-wrap:anywhere;user-select:none;
+}
+.typing-text span.correct{color:var(--good)}
+.typing-text span.incorrect{
+  color:var(--bad);background:rgba(211,68,85,.12);
+  border-radius:3px;text-decoration:underline;
+}
+.typing-text span.current{
+  background:var(--primary);color:white;border-radius:3px;
+}
+.typing-text span.pending{color:var(--muted)}
+.typing-input{
+  width:100%;height:90px;resize:vertical;margin-top:14px;
+  padding:15px;border:2px solid var(--border);border-radius:12px;
+  outline:none;background:var(--surface);color:var(--text);font-size:17px;
+}
+.typing-input:focus{border-color:var(--primary)}
+.typing-input:disabled{opacity:.7}
+.typing-controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.side-card h3{margin:0 0 14px;font-size:16px}
+.side-card p{color:var(--muted);font-size:13px;line-height:1.6}
+.setting-row{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;padding:12px 0;border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.setting-row:last-child{border:0}
+.switch{accent-color:var(--primary);width:18px;height:18px}
+.keyboard{display:grid;gap:6px;margin-top:18px}
+.key-row{display:flex;justify-content:center;gap:5px}
+.key{
+  min-width:0;flex:1;max-width:48px;height:42px;
+  background:var(--surface);border:1px solid var(--border);
+  border-bottom-width:3px;border-radius:7px;display:grid;
+  place-items:center;font-size:12px;font-weight:700;color:var(--text);
+}
+.key.space{max-width:240px;flex:5}
+.key.active{
+  background:var(--primary);color:white;border-color:var(--primary);
+  transform:translateY(2px);border-bottom-width:1px;
+}
+.key.pressed{background:var(--good);color:white}
+.keyboard-help{color:var(--muted);font-size:12px;text-align:center;margin-top:10px}
+.result{text-align:center;padding:28px}
+.result-icon{font-size:48px}
+.result h2{font-size:27px;margin:12px 0 5px}
+.result p{color:var(--muted)}
+.result-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin:22px 0}
+.result-grid .card strong{font-size:25px}
+.result-grid .card small{display:block;color:var(--muted);margin-top:6px}
+.hidden{display:none!important}
+.custom-area{
+  width:100%;min-height:170px;padding:15px;border-radius:12px;
+  border:1px solid var(--border);background:var(--surface);color:var(--text);
+  resize:vertical;outline:none;
+}
+.custom-area:focus{border-color:var(--primary)}
+.history-table{width:100%;border-collapse:collapse;min-width:550px}
+.history-table th,.history-table td{
+  text-align:left;padding:13px;border-bottom:1px solid var(--border);font-size:13px;
+}
+.history-table th{color:var(--muted)}
+.table-wrap{overflow-x:auto}
+.empty{text-align:center;color:var(--muted);padding:30px}
+.achievement-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.achievement{display:flex;align-items:center;gap:13px}
+.achievement-icon{
+  width:45px;height:45px;border-radius:12px;background:var(--surface2);
+  display:grid;place-items:center;font-size:22px;flex-shrink:0;
+}
+.achievement.locked{opacity:.45}
+.toast{
+  position:fixed;bottom:22px;right:22px;background:var(--text);
+  color:var(--surface);padding:13px 18px;border-radius:10px;
+  box-shadow:var(--shadow);z-index:20;display:none;
+}
+@media(max-width:1050px){
+  .stats-grid,.lesson-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .practice-layout{grid-template-columns:1fr}
+  .side-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+}
+@media(max-width:720px){
+  .sidebar{transform:translateX(-100%);transition:.25s;width:260px}
+  .sidebar.open{transform:translateX(0);box-shadow:var(--shadow)}
+  .main{margin-left:0;width:100%}
+  .topbar{height:62px;padding:0 15px}
+  .menu-btn{display:inline-block}
+  .content{padding:18px 13px}
+  .stats-grid{gap:10px}
+  .card{padding:15px}
+  .stat{gap:9px}
+  .stat-icon{width:36px;height:36px;font-size:17px}
+  .stat strong{font-size:21px}
+  .lesson-grid{grid-template-columns:1fr}
+  .practice-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .side-panel{grid-template-columns:1fr}
+  .result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .typing-card{padding:13px}
+  .typing-text{padding:15px;min-height:120px}
+  .key{height:35px;font-size:10px}
+  .key-row{gap:3px}
+  .typing-input{height:75px;font-size:15px}
+}
+@media(max-width:380px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat-icon{display:none}
+  .topbar h2{font-size:15px}
+  .top-actions{gap:5px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="logo">T</div>
+    <div><h2>TypeMaster</h2><small>Typing Academy</small></div>
+  </div>
+  <div class="nav-label">MAIN MENU</div>
+  <nav>
+    <button class="nav-btn active" data-page="dashboard"><span>⌂</span> Dashboard</button>
+    <button class="nav-btn" data-page="lessons"><span>▤</span> Lessons</button>
+    <button class="nav-btn" data-page="practice"><span>⌨</span> Typing Test</button>
+    <button class="nav-btn" data-page="custom"><span>✎</span> Custom Practice</button>
+    <button class="nav-btn" data-page="achievements"><span>♛</span> Achievements</button>
+    <button class="nav-btn" data-page="history"><span>◷</span> Test History</button>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="profile">
+      <div class="avatar">T</div>
+      <div><strong>Typing Learner</strong><br><small>Keep improving!</small></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="icon-btn menu-btn" id="menuBtn">☰</button>
+    <h2 id="pageTitle">Dashboard</h2>
+  </div>
+  <div class="top-actions">
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">☾</button>
+    <button class="icon-btn" id="resetBtn" title="Reset all progress">↻ Reset</button>
+  </div>
+</header>
+
+<div class="content">
+<!-- DASHBOARD -->
+<section class="page active" id="dashboard">
+  <div class="heading">
+    <h1>Welcome to TypeMaster! 👋</h1>
+    <p>Build your typing skills step by step. Practice regularly and track your progress.</p>
+  </div>
+  <div class="grid stats-grid">
+    <div class="card stat"><div class="stat-icon">⚡</div><div><small>Best WPM</small><strong id="dashWpm">0</strong></div></div>
+    <div class="card stat"><div class="stat-icon">🎯</div><div><small>Best Accuracy</small><strong id="dashAccuracy">0%</strong></div></div>
+    <div class="card stat"><div class="stat-icon">🏆</div><div><small>Total XP</small><strong id="dashXp">0</strong></div></div>
+    <div class="card stat"><div class="stat-icon">📚</div><div><small>Lessons Done</small><strong id="dashLessons">0/24</strong></div></div>
+  </div>
+  <div class="section-title"><h2>Your learning progress</h2><span id="progressLabel">0% completed</span></div>
+  <div class="card">
+    <div class="progress"><div class="progress-fill" id="courseProgress"></div></div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:0">Complete lessons to unlock your typing potential.</p>
+  </div>
+  <div class="section-title"><h2>Continue learning</h2><button class="btn" onclick="showPage('lessons')">View all lessons →</button></div>
+  <div class="grid lesson-grid" id="dashboardLessons"></div>
+  <div class="section-title"><h2>Quick practice</h2></div>
+  <div class="card">
+    <p style="color:var(--muted)">Want to test your current typing speed?</p>
+    <button class="btn" onclick="startPractice('The quick brown fox jumps over the lazy dog.')">Start a quick typing test →</button>
+  </div>
+</section>
+
+<!-- LESSONS -->
+<section class="page" id="lessons">
+  <div class="heading"><h1>Typing Lessons 📚</h1><p>Learn keyboard keys progressively, from the home row to complete sentences.</p></div>
+  <div class="grid stats-grid" style="margin-bottom:22px">
+    <div class="card stat"><div class="stat-icon">📖</div><div><small>Total lessons</small><strong>24</strong></div></div>
+    <div class="card stat"><div class="stat-icon">✅</div><div><small>Completed</small><strong id="lessonDoneCount">0</strong></div></div>
+  </div>
+  <div class="grid lesson-grid" id="allLessons"></div>
+</section>
+
+<!-- PRACTICE -->
+<section class="page" id="practice">
+  <div class="heading"><h1>Typing Test ⌨️</h1><p>Type the displayed text. Your speed and accuracy update as you type.</p></div>
+  <div id="testArea">
+    <div class="grid practice-stats">
+      <div class="card practice-stat"><small>⚡ WPM</small><strong id="wpm">0</strong></div>
+      <div class="card practice-stat"><small>🎯 Accuracy</small><strong id="accuracy">100%</strong></div>
+      <div class="card practice-stat"><small>❌ Errors</small><strong id="errors">0</strong></div>
+      <div class="card practice-stat"><small>⏱ Time</small><strong id="time">0s</strong></div>
+    </div>
+    <div class="practice-layout">
+      <div class="practice-main">
+        <div class="card typing-card">
+          <div class="typing-top">
+            <h2 id="testTitle">Ready to practice?</h2>
+            <span class="tag" id="testTag">Beginner</span>
+          </div>
+          <div class="typing-text" id="typingText">Select a lesson or start a typing test to begin.</div>
+          <textarea class="typing-input" id="typingInput" placeholder="Your typing will appear here..." spellcheck="false" autocomplete="off" autocapitalize="off" disabled></textarea>
+          <div class="typing-controls">
+            <button class="btn" id="startBtn">Start / Restart</button>
+            <button class="btn secondary" id="finishBtn" disabled>Finish test</button>
+            <button class="btn outline" id="nextBtn" disabled>Next lesson →</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="typing-top"><h3 style="margin:0">Virtual Keyboard</h3><span class="tag">Next key highlighted</span></div>
+          <div class="keyboard" id="keyboard"></div>
+          <div class="keyboard-help" id="keyboardHelp">The next key will be highlighted while you type.</div>
+        </div>
+      </div>
+      <div class="side-panel">
+        <div class="card side-card">
+          <h3>Practice settings ⚙️</h3>
+          <div class="setting-row"><span>No-backspace mode</span><input class="switch" type="checkbox" id="noBackspace" checked></div>
+          <div class="setting-row"><span>Show keyboard</span><input class="switch" type="checkbox" id="showKeyboard" checked></div>
+          <div class="setting-row"><span>Show finger guide</span><input class="switch" type="checkbox" id="showFinger" checked></div>
+          <div class="setting-row"><span>Test duration</span>
+            <select id="duration" style="max-width:110px;padding:6px;border-radius:7px;background:var(--surface2);color:var(--text);border:1px solid var(--border)">
+              <option value="0">Full text</option><option value="60">1 minute</option><option value="120">2 minutes</option>
+            </select>
+          </div>
+        </div>
+        <div class="card side-card">
+          <h3>Finger guidance ✋</h3>
+          <p id="fingerGuide">Place your fingers on the home row: ASDF and JKL;.</p>
+          <p>Keep your wrists relaxed and look at the screen instead of the keyboard.</p>
+        </div>
+        <div class="card side-card">
+          <h3>Typing tips 💡</h3>
+          <p>• Focus on accuracy first.<br>• Keep a steady rhythm.<br>• Use the correct fingers.<br>• Practice consistently.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card result hidden" id="resultArea">
+    <div class="result-icon">🏆</div>
+    <h2>Test Completed!</h2>
+    <p id="resultMessage">Great effort! Keep practicing.</p>
+    <div class="grid result-grid">
+      <div class="card"><strong id="resultWpm">0</strong><small>WPM</small></div>
+      <div class="card"><strong id="resultAccuracy">0%</strong><small>Accuracy</small></div>
+      <div class="card"><strong id="resultErrors">0</strong><small>Errors</small></div>
+      <div class="card"><strong id="resultTime">0s</strong><small>Time</small></div>
+    </div>
+    <p id="resultXp">You earned 0 XP!</p>
+    <div class="typing-controls" style="justify-content:center">
+      <button class="btn" id="retryBtn">Try again</button>
+      <button class="btn secondary" onclick="showPage('lessons')">Choose another lesson</button>
+      <button class="btn outline" onclick="showPage('dashboard')">Dashboard</button>
+    </div>
+  </div>
+</section>
+
+<!-- CUSTOM -->
+<section class="page" id="custom">
+  <div class="heading"><h1>Custom Practice ✎</h1><p>Paste your own text and practice typing anything you want.</p></div>
+  <div class="card">
+    <h3>Enter your practice text</h3>
+    <textarea class="custom-area" id="customText" placeholder="Type or paste your own paragraph here..."></textarea>
+    <div class="typing-controls">
+      <button class="btn" id="customStart">Start custom practice →</button>
+      <button class="btn secondary" id="sampleText">Load sample text</button>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section class="page" id="achievements">
+  <div class="heading"><h1>Achievements 🏆</h1><p>Earn rewards as you develop your typing skills.</p></div>
+  <div class="grid achievement-grid" id="achievementGrid"></div>
+</section>
+
+<!-- HISTORY -->
+<section class="page" id="history">
+  <div class="heading"><h1>Test History ◷</h1><p>Review your recent typing test performance.</p></div>
+  <div class="card">
+    <div class="section-title" style="margin-top:0"><h2>Recent tests</h2><button class="btn secondary" id="exportBtn">Export CSV ↓</button></div>
+    <div class="table-wrap">
+      <table class="history-table">
+        <thead><tr><th>Date</th><th>Test</th><th>WPM</th><th>Accuracy</th><th>Errors</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+</div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* -------------------- LESSON DATA -------------------- */
+const lessons = [
+ ["Home Row Introduction","asdf jkl; asdf jkl;","Learn the home row keys."],
+ ["Left Hand Home Keys","asdf fdsa asdf fdsa","Practice A, S, D and F."],
+ ["Right Hand Home Keys","jkl; ;lkj jkl; ;lkj","Practice J, K, L and semicolon."],
+ ["Home Row Combinations","asdf jkl; fj dk sl a;","Combine both hands."],
+ ["Home Row Sentences","ask dad; fall flask;","Build home row confidence."],
+ ["Left Top Row","qwer rewq qwer rewq","Practice Q, W, E and R."],
+ ["Right Top Row","uiop poi uio p","Practice U, I, O and P."],
+ ["Top Row Combinations","qwer uiop qwer uiop","Combine top row keys."],
+ ["Top Row Sentences","we were quiet; power up;","Practice top row words."],
+ ["Left Bottom Row","zxcv vcxz zxcv vcxz","Practice Z, X, C and V."],
+ ["Right Bottom Row","bnm mnb bnm mnb","Practice B, N and M."],
+ ["Bottom Row Combinations","zxcv bnm zxcv bnm","Combine bottom row keys."],
+ ["All Alphabet Keys","abcdefghijklmnopqrstuvwxyz","Practice the full alphabet."],
+ ["Numbers 1 to 5","12345 54321 12345","Learn the first number keys."],
+ ["Numbers 6 to 0","67890 09876 67890","Learn the remaining numbers."],
+ ["Number Combinations","123 456 789 012 345","Practice number combinations."],
+ ["Comma and Period","hello, world. typing, practice.","Learn basic punctuation."],
+ ["Question and Exclamation","How are you? Great! Try again!","Practice questions and exclamations."],
+ ["Quotation Marks",'"Practice makes progress," she said.','Practice quotation marks.'],
+ ["Short Common Words","the and you are can get","Build common word recognition."],
+ ["Everyday Vocabulary","keyboard practice learning typing skills","Practice everyday vocabulary."],
+ ["Short Sentences","I love to learn new skills.","Practice short sentences."],
+ ["Longer Sentences","Typing every day helps you become faster and more accurate.","Practice longer sentences."],
+ ["Final Typing Challenge","The quick brown fox jumps over the lazy dog. Practice makes progress every day.","Complete your typing course."]
+];
+
+const achievements = [
+ ["First Steps","Complete your first lesson","🌱",s=>s.completed.length>=1],
+ ["Practice Habit","Complete five lessons","🔥",s=>s.completed.length>=5],
+ ["Course Explorer","Complete twelve lessons","📚",s=>s.completed.length>=12],
+ ["Course Master","Complete all 24 lessons","🎓",s=>s.completed.length>=24],
+ ["Speed Starter","Reach 30 WPM","⚡",s=>s.bestWpm>=30],
+ ["Precision Typist","Reach 98% accuracy","🎯",s=>s.bestAccuracy>=98],
+ ["XP Collector","Earn 500 XP","💎",s=>s.xp>=500],
+ ["Number Ninja","Complete number lessons","🔢",s=>[13,14,15].every(i=>s.completed.includes(i))],
+ ["Punctuation Pro","Complete punctuation lessons","✍️",s=>[16,17,18].every(i=>s.completed.includes(i))]
+];
+
+/* -------------------- STORAGE -------------------- */
+const STORAGE_KEY = "typemaster_academy_v4";
+function freshState(){
+ return {xp:0,completed:[],bestWpm:0,bestAccuracy:0,history:[],theme:"light"};
+}
+let state;
+try{
+ state={...freshState(),...JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")};
+ if(!Array.isArray(state.completed))state.completed=[];
+ if(!Array.isArray(state.history))state.history=[];
+}catch(e){state=freshState()}
+
+function save(){
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+ catch(e){notify("Unable to save progress in this browser.")}
+}
+function notify(message){
+ const el=document.getElementById("toast");
+ el.textContent=message;el.style.display="block";
+ clearTimeout(notify.timer);
+ notify.timer=setTimeout(()=>el.style.display="none",2400);
+}
+
+/* -------------------- NAVIGATION -------------------- */
+const pageNames={
+ dashboard:"Dashboard",lessons:"Typing Lessons",practice:"Typing Test",
+ custom:"Custom Practice",achievements:"Achievements",history:"Test History"
+};
+function showPage(name){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(name).classList.add("active");
+ document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
+ document.getElementById("pageTitle").textContent=pageNames[name];
+ document.getElementById("sidebar").classList.remove("open");
+ if(name==="dashboard")renderDashboard();
+ if(name==="lessons")renderLessons();
+ if(name==="achievements")renderAchievements();
+ if(name==="history")renderHistory();
+}
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+ btn.addEventListener("click",()=>showPage(btn.dataset.page));
+});
+document.getElementById("menuBtn").onclick=()=>document.getElementById("sidebar").classList.toggle("open");
+
+/* -------------------- THEME -------------------- */
+function applyTheme(){
+ document.body.classList.toggle("dark",state.theme==="dark");
+ document.getElementById("themeBtn").textContent=state.theme==="dark"?"☀":"☾";
+}
+document.getElementById("themeBtn").onclick=()=>{
+ state.theme=state.theme==="dark"?"light":"dark";
+ applyTheme();save();
+};
+applyTheme();
+
+/* -------------------- DASHBOARD -------------------- */
+function renderDashboard(){
+ document.getElementById("dashWpm").textContent=state.bestWpm;
+ document.getElementById("dashAccuracy").textContent=state.bestAccuracy+"%";
+ document.getElementById("dashXp").textContent=state.xp;
+ document.getElementById("dashLessons").textContent=state.completed.length+"/24";
+ document.getElementById("lessonDoneCount").textContent=state.completed.length;
+ const percent=Math.round(state.completed.length/24*100);
+ document.getElementById("courseProgress").style.width=percent+"%";
+ document.getElementById("progressLabel").textContent=percent+"% completed";
+ const next=lessons.findIndex((_,i)=>!state.completed.includes(i));
+ const indexes=next<0?[23]:[next,Math.min(next+1,23),Math.min(next+2,23)];
+ document.getElementById("dashboardLessons").innerHTML=indexes.map(i=>lessonCard(i)).join("");
+}
+function lessonCard(i){
+ const done=state.completed.includes(i);
+ return `<article class="card lesson-card">
+ <div class="lesson-top"><div class="lesson-number">${String(i+1).padStart(2,"0")}</div>
+ <span class="tag">${done?"✓ Completed":"Lesson "+(i+1)}</span></div>
+ <h3>${escapeHTML(lessons[i][0])}</h3><p>${escapeHTML(lessons[i][2])}</p>
+ <button class="btn ${done?"secondary":""}" onclick="startLesson(${i})">${done?"Practice again":"Start lesson →"}</button>
+ </article>`;
+}
+function renderLessons(){
+ document.getElementById("allLessons").innerHTML=lessons.map((_,i)=>lessonCard(i)).join("");
+ document.getElementById("lessonDoneCount").textContent=state.completed.length;
+}
+
+/* -------------------- SAFE TEXT -------------------- */
+function escapeHTML(str){
+ return String(str).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+/* -------------------- KEYBOARD -------------------- */
+const keyboardRows=["1234567890","qwertyuiop","asdfghjkl;","zxcvbnm"];
+function buildKeyboard(){
+ const keyboard=document.getElementById("keyboard");
+ keyboard.innerHTML="";
+ keyboardRows.forEach(row=>{
+  const rowEl=document.createElement("div");
+  rowEl.className="key-row";
+  [...row].forEach(char=>{
+   const key=document.createElement("div");
+   key.className="key";key.dataset.key=char;key.textContent=char;
+   rowEl.appendChild(key);
+  });
+  keyboard.appendChild(rowEl);
+ });
+ const row=document.createElement("div");row.className="key-row";
+ const space=document.createElement("div");
+ space.className="key space";space.dataset.key=" ";space.textContent="SPACE";
+ row.appendChild(space);keyboard.appendChild(row);
+}
+buildKeyboard();
+
+function fingerFor(key){
+ const k=key.toLowerCase();
+ const map={
+  q:"Left pinky",a:"Left pinky",z:"Left pinky", "1":"Left pinky",
+  w:"Left ring",s:"Left ring",x:"Left ring","2":"Left ring",
+  e:"Left middle",d:"Left middle",c:"Left middle","3":"Left middle",
+  r:"Left index",f:"Left index",v:"Left index","4":"Left index",
+  t:"Left index",g:"Left index",b:"Left index","5":"Left index",
+  y:"Right index",h:"Right index",n:"Right index","6":"Right index",
+  u:"Right index",j:"Right index",m:"Right index","7":"Right index",
+  i:"Right middle",k:"Right middle","8":"Right middle",
+  o:"Right ring",l:"Right ring","9":"Right ring",
+  p:"Right pinky",";":"Right pinky","0":"Right pinky"
+ };
+ if(key===" ")return "Both thumbs";
+ return map[k]||"Use the nearest comfortable finger";
+}
+function highlightKey(){
+ document.querySelectorAll(".key").forEach(k=>k.classList.remove("active"));
+ if(!session||session.finished)return;
+ const next=session.prompt[session.typed.length];
+ if(next===undefined)return;
+ const key=document.querySelector(`.key[data-key="${CSS.escape(next.toLowerCase())}"]`);
+ if(key)key.classList.add("active");
+ document.getElementById("keyboardHelp").textContent="Next key: "+(next===" "?"SPACE":next.toUpperCase());
+ document.getElementById("fingerGuide").textContent="Suggested finger: "+fingerFor(next)+". Keep your fingers relaxed.";
+}
+
+/* -------------------- TYPING SESSION -------------------- */
+let session=null;
+let clock=null;
+let lastResult=null;
+
+function startLesson(index){
+ startPractice(lessons[index][1],lessons[index][0],"Lesson "+(index+1),index);
+}
+function startPractice(prompt,title="Typing Practice",tag="Practice",lessonIndex=null){
+ showPage("practice");
+ document.getElementById("testArea").classList.remove("hidden");
+ document.getElementById("resultArea").classList.add("hidden");
+ session={
+  prompt:String(prompt),typed:"",started:false,finished:false,
+  startTime:0,elapsed:0,errors:0,lessonIndex,
+  title,tag
+ };
+ document.getElementById("testTitle").textContent=title;
+ document.getElementById("testTag").textContent=tag;
+ const input=document.getElementById("typingInput");
+ input.disabled=false;input.value="";input.focus();
+ document.getElementById("startBtn").textContent="Restart";
+ document.getElementById("finishBtn").disabled=false;
+ document.getElementById("nextBtn").disabled=true;
+ updateTypingDisplay();updateStats();
+ clearInterval(clock);clock=null;
+}
+function startClock(){
+ if(session.started)return;
+ session.started=true;session.startTime=Date.now();
+ clock=setInterval(updateStats,250);
+}
+function getElapsed(){
+ if(!session)return 0;
+ return session.started?(Date.now()-session.startTime)/1000:0;
+}
+function updateStats(){
+ if(!session)return;
+ const elapsed=getElapsed();
+ const correct=[...session.typed].filter((c,i)=>c===session.prompt[i]).length;
+ const minutes=elapsed/60;
+ const wpm=minutes>0?Math.round((correct/5)/minutes):0;
+ const accuracy=session.typed.length?Math.round(correct/session.typed.length*100):100;
+ document.getElementById("wpm").textContent=wpm;
+ document.getElementById("accuracy").textContent=accuracy+"%";
+ document.getElementById("errors").textContent=session.errors;
+ document.getElementById("time").textContent=Math.floor(elapsed)+"s";
+ const duration=Number(document.getElementById("duration").value);
+ if(duration>0&&elapsed>=duration){finishTest();return}
+}
+function updateTypingDisplay(){
+ if(!session)return;
+ const container=document.getElementById("typingText");
+ container.innerHTML="";
+ for(let i=0;i<session.prompt.length;i++){
+  const span=document.createElement("span");
+  span.textContent=session.prompt[i];
+  if(i<session.typed.length){
+   span.className=session.typed[i]===session.prompt[i]?"correct":"incorrect";
+  }else if(i===session.typed.length){
+   span.className="current";
+  }else span.className="pending";
+  container.appendChild(span);
+ }
+ highlightKey();
+}
+function handleInput(){
+ if(!session||session.finished)return;
+ const input=document.getElementById("typingInput");
+ let value=input.value;
+ // Backspace is blocked in no-backspace mode; also keep input synchronized.
+ if(document.getElementById("noBackspace").checked&&value.length<session.typed.length){
+  input.value=session.typed;return;
+ }
+ // Prevent typing beyond the displayed text.
+ if(value.length>session.prompt.length){
+  value=value.slice(0,session.prompt.length);input.value=value;
+ }
+ if(value.length>0)startClock();
+ session.typed=value;
+ session.errors=[...value].filter((c,i)=>c!==session.prompt[i]).length;
+ updateTypingDisplay();updateStats();
+ if(value.length===session.prompt.length)finishTest();
+}
+const typingInput=document.getElementById("typingInput");
+typingInput.addEventListener("keydown",e=>{
+ if(document.getElementById("noBackspace").checked&&
+   ["Backspace","Delete"].includes(e.key)){
+  e.preventDefault();notify("Backspace and Delete are disabled in this practice.");
+ }
+ if(e.key==="Tab")e.preventDefault();
+});
+typingInput.addEventListener("beforeinput",e=>{
+ if(document.getElementById("noBackspace").checked&&
+   e.inputType&&e.inputType.startsWith("delete")){
+  e.preventDefault();
+ }
+});
+typingInput.addEventListener("input",handleInput);
+
+function finishTest(){
+ if(!session||session.finished)return;
+ if(session.typed.length===0){
+  notify("Type at least one character before finishing.");return;
+ }
+ session.finished=true;clearInterval(clock);clock=null;
+ typingInput.disabled=true;
+ const elapsed=Math.max(1,getElapsed());
+ const correct=[...session.typed].filter((c,i)=>c===session.prompt[i]).length;
+ const accuracy=Math.round(correct/session.typed.length*100);
+ const wpm=Math.round((correct/5)/(elapsed/60));
+ const complete=session.typed.length===session.prompt.length;
+ const xp=Math.max(1,Math.round(wpm/2+accuracy/10));
+ state.xp+=xp;
+ state.bestWpm=Math.max(state.bestWpm,wpm);
+ state.bestAccuracy=Math.max(state.bestAccuracy,accuracy);
+ if(session.lessonIndex!==null&&complete&&accuracy>=60&&
+    !state.completed.includes(session.lessonIndex)){
+  state.completed.push(session.lessonIndex);
+ }
+ const record={
+  date:new Date().toLocaleString(),
+  title:session.title,wpm,accuracy,errors:session.errors,
+  time:Math.round(elapsed)
+ };
+ state.history.unshift(record);
+ state.history=state.history.slice(0,50);
+ save();renderDashboard();
+ document.getElementById("testArea").classList.add("hidden");
+ document.getElementById("resultArea").classList.remove("hidden");
+ document.getElementById("resultWpm").textContent=wpm;
+ document.getElementById("resultAccuracy").textContent=accuracy+"%";
+ document.getElementById("resultErrors").textContent=session.errors;
+ document.getElementById("resultTime").textContent=Math.round(elapsed)+"s";
+ document.getElementById("resultXp").textContent="You earned "+xp+" XP!";
+ document.getElementById("resultMessage").textContent=
+  complete?"Excellent! You completed the full text.":"Good effort! You completed a partial practice session.";
+ document.getElementById("nextBtn").disabled=!complete||session.lessonIndex===null;
+ notify("Test completed! Your result is ready.");
+}
+document.getElementById("startBtn").onclick=()=>{
+ if(session)startPractice(session.prompt,session.title,session.tag,session.lessonIndex);
+};
+document.getElementById("finishBtn").onclick=finishTest;
+document.getElementById("retryBtn").onclick=()=>{
+ if(lastResult)startPractice(lastResult.prompt,lastResult.title,lastResult.tag,lastResult.lessonIndex);
+};
+document.getElementById("nextBtn").onclick=()=>{
+ if(session&&session.lessonIndex!==null){
+  const next=session.lessonIndex+1;
+  if(next<lessons.length)startLesson(next);
+  else{notify("Congratulations! You completed all lessons.");showPage("lessons")}
+ }
+};
+const originalStartPractice=startPractice;
+function rememberPractice(prompt,title,tag,lessonIndex){
+ lastResult={prompt,title,tag,lessonIndex};
+ originalStartPractice(prompt,title,tag,lessonIndex);
+}
+// Keep retry details for every new session.
+const startPracticeOriginal=startPractice;
+startPractice=function(prompt,title="Typing Practice",tag="Practice",lessonIndex=null){
+ lastResult={prompt,title,tag,lessonIndex};
+ startPracticeOriginal(prompt,title,tag,lessonIndex);
+};
+
+/* -------------------- SETTINGS -------------------- */
+document.getElementById("showKeyboard").onchange=e=>{
+ document.getElementById("keyboard").parentElement.style.display=e.target.checked?"grid":"none";
+};
+document.getElementById("showFinger").onchange=e=>{
+ document.getElementById("fingerGuide").parentElement.style.display=e.target.checked?"block":"none";
+};
+
+/* -------------------- CUSTOM PRACTICE -------------------- */
+document.getElementById("customStart").onclick=()=>{
+ const text=document.getElementById("customText").value.trim();
+ if(!text){notify("Please enter some text first.");return}
+ if(text.length>2000){notify("Please keep custom text under 2,000 characters.");return}
+ startPractice(text,"Custom Practice","Your text");
+};
+document.getElementById("sampleText").onclick=()=>{
+ document.getElementById("customText").value=
+ "Typing is a useful skill that improves with regular practice. Focus on accuracy, use the correct fingers, and build your speed gradually.";
+};
+
+/* -------------------- ACHIEVEMENTS -------------------- */
+function renderAchievements(){
+ document.getElementById("achievementGrid").innerHTML=achievements.map(a=>{
+  const unlocked=a[3](state);
+  return `<div class="card achievement ${unlocked?"":"locked"}">
+   <div class="achievement-icon">${a[2]}</div><div>
+   <strong>${a[0]}</strong><p style="font-size:12px;color:var(--muted);margin:5px 0">${a[1]}</p>
+   <span class="tag">${unlocked?"Unlocked ✓":"Locked"}</span></div></div>`;
+ }).join("");
+}
+
+/* -------------------- HISTORY -------------------- */
+function renderHistory(){
+ const body=document.getElementById("historyBody");
+ if(!state.history.length){
+  body.innerHTML='<tr><td colspan="5" class="empty">No typing tests yet. Start practicing to see your results here.</td></tr>';
+  return;
+ }
+ body.innerHTML=state.history.map(h=>`<tr>
+ <td>${escapeHTML(h.date)}</td><td>${escapeHTML(h.title)}</td>
+ <td>${h.wpm}</td><td>${h.accuracy}%</td><td>${h.errors}</td></tr>`).join("");
+}
+document.getElementById("exportBtn").onclick=()=>{
+ if(!state.history.length){notify("No history to export.");return}
+ const rows=[["Date","Test","WPM","Accuracy","Errors","Time"]];
+ state.history.forEach(h=>rows.push([h.date,h.title,h.wpm,h.accuracy,h.errors,h.time]));
+ const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n");
+ const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download="typemaster-history.csv";
+ a.click();URL.revokeObjectURL(url);
+};
+
+/* -------------------- RESET -------------------- */
+document.getElementById("resetBtn").onclick=()=>{
+ if(!confirm("Are you sure you want to reset all your progress, XP and test history?"))return;
+ clearInterval(clock);clock=null;
+ state=freshState();save();applyTheme();
+ session=null;lastResult=null;
+ typingInput.value="";typingInput.disabled=true;
+ document.getElementById("resultArea").classList.add("hidden");
+ document.getElementById("testArea").classList.remove("hidden");
+ document.getElementById("typingText").textContent="Select a lesson or start a typing test to begin.";
+ updateStats();renderDashboard();renderLessons();renderHistory();renderAchievements();
+ showPage("dashboard");notify("Your progress has been reset.");
+};
+
+/* -------------------- INITIALIZE -------------------- */
+renderDashboard();
+renderLessons();
+renderAchievements();
+renderHistory();
+showPage("dashboard");
+</script>
+</body>
+</html>
+
